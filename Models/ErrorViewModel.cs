@@ -1,4 +1,4 @@
-namespace Base_ERP.Models;
+namespace Nexo.Models;
 
 public class ErrorViewModel
 {

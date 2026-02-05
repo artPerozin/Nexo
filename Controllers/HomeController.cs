@@ -1,8 +1,8 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using Base_ERP.Models;
+using Nexo.Models;
 
-namespace Base_ERP.Controllers;
+namespace Nexo.Controllers;
 
 public class HomeController : Controller
 {

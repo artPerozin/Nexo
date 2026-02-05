@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\peroz\\OneDrive\\Desktop\\UDESC\\KonvexJr\\Base-ERP\\Base-ERP.csproj": {}
+    "C:\\Users\\peroz\\OneDrive\\Desktop\\UDESC\\KonvexJr\\Nexo\\Base-ERP.csproj": {}
   },
   "projects": {
-    "C:\\Users\\peroz\\OneDrive\\Desktop\\UDESC\\KonvexJr\\Base-ERP\\Base-ERP.csproj": {
+    "C:\\Users\\peroz\\OneDrive\\Desktop\\UDESC\\KonvexJr\\Nexo\\Base-ERP.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\peroz\\OneDrive\\Desktop\\UDESC\\KonvexJr\\Base-ERP\\Base-ERP.csproj",
+        "projectUniqueName": "C:\\Users\\peroz\\OneDrive\\Desktop\\UDESC\\KonvexJr\\Nexo\\Base-ERP.csproj",
         "projectName": "Base-ERP",
-        "projectPath": "C:\\Users\\peroz\\OneDrive\\Desktop\\UDESC\\KonvexJr\\Base-ERP\\Base-ERP.csproj",
+        "projectPath": "C:\\Users\\peroz\\OneDrive\\Desktop\\UDESC\\KonvexJr\\Nexo\\Base-ERP.csproj",
         "packagesPath": "C:\\Users\\peroz\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\peroz\\OneDrive\\Desktop\\UDESC\\KonvexJr\\Base-ERP\\obj\\",
+        "outputPath": "C:\\Users\\peroz\\OneDrive\\Desktop\\UDESC\\KonvexJr\\Nexo\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\peroz\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -43,6 +43,22 @@
       "frameworks": {
         "net10.0": {
           "targetAlias": "net10.0",
+          "dependencies": {
+            "BCrypt.Net-Next": {
+              "target": "Package",
+              "version": "[4.0.3, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[10.0.2, )"
+            },
+            "Npgsql.EntityFrameworkCore.PostgreSQL": {
+              "target": "Package",
+              "version": "[10.0.0, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
