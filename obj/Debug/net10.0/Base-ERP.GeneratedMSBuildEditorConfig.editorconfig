@@ -30,12 +30,24 @@ build_property._RazorSourceGeneratorDebug =
 build_property.EffectiveAnalysisLevelStyle = 10.0
 build_property.EnableCodeStyleSeverity = 
 
+[C:/Users/peroz/OneDrive/Desktop/UDESC/KonvexJr/Nexo/Views/Dashboard/Admin.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGFzaGJvYXJkXEFkbWluLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/peroz/OneDrive/Desktop/UDESC/KonvexJr/Nexo/Views/Dashboard/Gerente.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGFzaGJvYXJkXEdlcmVudGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/peroz/OneDrive/Desktop/UDESC/KonvexJr/Nexo/Views/Dashboard/Usuario.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGFzaGJvYXJkXFVzdWFyaW8uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/peroz/OneDrive/Desktop/UDESC/KonvexJr/Nexo/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/peroz/OneDrive/Desktop/UDESC/KonvexJr/Nexo/Views/Home/Privacy.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
+[C:/Users/peroz/OneDrive/Desktop/UDESC/KonvexJr/Nexo/Views/Shared/AcessoNegado.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEFjZXNzb05lZ2Fkby5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/peroz/OneDrive/Desktop/UDESC/KonvexJr/Nexo/Views/Shared/Error.cshtml]
@@ -44,6 +56,14 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/peroz/OneDrive/Desktop/UDESC/KonvexJr/Nexo/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/peroz/OneDrive/Desktop/UDESC/KonvexJr/Nexo/Views/Usuario/Cadastro.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXN1YXJpb1xDYWRhc3Ryby5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/peroz/OneDrive/Desktop/UDESC/KonvexJr/Nexo/Views/Usuario/Login.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXN1YXJpb1xMb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/peroz/OneDrive/Desktop/UDESC/KonvexJr/Nexo/Views/_ViewImports.cshtml]

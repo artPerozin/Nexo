@@ -2215,9 +2215,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\peroz\\OneDrive\\Desktop\\UDESC\\KonvexJr\\Nexo\\Base-ERP.csproj",
-      "projectName": "Base-ERP",
-      "projectPath": "C:\\Users\\peroz\\OneDrive\\Desktop\\UDESC\\KonvexJr\\Nexo\\Base-ERP.csproj",
+      "projectUniqueName": "C:\\Users\\peroz\\OneDrive\\Desktop\\UDESC\\KonvexJr\\Nexo\\Nexo.csproj",
+      "projectName": "Nexo",
+      "projectPath": "C:\\Users\\peroz\\OneDrive\\Desktop\\UDESC\\KonvexJr\\Nexo\\Nexo.csproj",
       "packagesPath": "C:\\Users\\peroz\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\peroz\\OneDrive\\Desktop\\UDESC\\KonvexJr\\Nexo\\obj\\",
       "projectStyle": "PackageReference",

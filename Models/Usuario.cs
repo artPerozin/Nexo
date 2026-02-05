@@ -29,6 +29,19 @@ namespace Nexo.Models
         [DataType(DataType.Password)]
         [Compare("Senha", ErrorMessage = "As senhas não coincidem")]
         public string? ConfirmarSenha { get; set; }
+        
+        [Required]
+        public bool Ativo { get; set; } = true;
+        
+        [Required]
+        public int RoleId { get; set; }
+        
+        [ForeignKey("RoleId")]
+        public virtual Role? Role { get; set; }
+        
+        public DateTime DataCriacao { get; set; } = DateTime.UtcNow;
+        
+        public DateTime? DataAtualizacao { get; set; }
     }
     
     public class LoginViewModel

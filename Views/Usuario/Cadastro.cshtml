@@ -1,0 +1,367 @@
+@model Nexo.Models.Usuario
+
+@{
+    ViewData["Title"] = "Cadastro";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Konvex Jr</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --konvex-blue-light: #7EC8E3;
+            --konvex-blue-dark: #1E4D5C;
+            --konvex-orange: #FF6B4A;
+            --konvex-gradient: linear-gradient(135deg, #1E4D5C 0%, #7EC8E3 100%);
+        }
+        
+        body {
+            background: var(--konvex-gradient);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: rgba(126, 200, 227, 0.1);
+            border-radius: 50%;
+            filter: blur(80px);
+        }
+        
+        body::after {
+            content: '';
+            position: absolute;
+            bottom: -50%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            background: rgba(255, 107, 74, 0.1);
+            border-radius: 50%;
+            filter: blur(80px);
+        }
+        
+        .card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(30, 77, 92, 0.3);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .card-header {
+            background: var(--konvex-gradient);
+            color: white;
+            padding: 2.5rem;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 107, 74, 0.2);
+            border-radius: 50%;
+        }
+        
+        .card-header h2 {
+            margin: 0;
+            font-weight: 700;
+            position: relative;
+            z-index: 1;
+            letter-spacing: 0.5px;
+        }
+        
+        .logo-accent {
+            display: inline-block;
+            width: 40px;
+            height: 4px;
+            background: var(--konvex-orange);
+            margin-bottom: 1rem;
+            border-radius: 2px;
+        }
+        
+        .card-body {
+            padding: 2.5rem;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: var(--konvex-blue-dark);
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+        
+        .form-control {
+            border-radius: 12px;
+            padding: 0.85rem 1.2rem;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+        
+        .form-control:focus {
+            border-color: var(--konvex-blue-light);
+            box-shadow: 0 0 0 0.25rem rgba(126, 200, 227, 0.25);
+            transform: translateY(-1px);
+        }
+        
+        .input-group-text {
+            border-radius: 12px 0 0 12px;
+            border: 2px solid #e9ecef;
+            border-right: none;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            color: var(--konvex-blue-dark);
+            transition: all 0.3s ease;
+        }
+        
+        .input-group:focus-within .input-group-text {
+            border-color: var(--konvex-blue-light);
+            background: linear-gradient(135deg, rgba(126, 200, 227, 0.1) 0%, #ffffff 100%);
+        }
+        
+        .input-group .form-control {
+            border-left: none;
+            border-radius: 0 12px 12px 0;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--konvex-orange) 0%, #ff8566 100%);
+            border: none;
+            border-radius: 12px;
+            padding: 0.85rem 2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 74, 0.3);
+            letter-spacing: 0.5px;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(255, 107, 74, 0.4);
+            background: linear-gradient(135deg, #ff8566 0%, var(--konvex-orange) 100%);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        
+        .btn-link {
+            color: var(--konvex-blue-dark);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .btn-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background: var(--konvex-orange);
+            transition: width 0.3s ease;
+        }
+        
+        .btn-link:hover {
+            color: var(--konvex-orange);
+        }
+        
+        .btn-link:hover::after {
+            width: 100%;
+        }
+        
+        .text-danger {
+            color: var(--konvex-orange) !important;
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+        }
+        
+        @@keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .card {
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        .form-control::placeholder {
+            color: #adb5bd;
+        }
+        
+        /* SweetAlert customization */
+        .swal2-popup {
+            border-radius: 20px;
+        }
+        
+        .swal2-confirm {
+            background: var(--konvex-orange) !important;
+            border-radius: 10px !important;
+            padding: 0.75rem 2rem !important;
+            font-weight: 600 !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="card">
+                    <div class="card-header text-center">
+                        <div class="logo-accent mx-auto"></div>
+                        <h2><i class="bi bi-person-plus-fill me-2"></i>Cadastro de Usuário</h2>
+                        <small class="d-block mt-2" style="opacity: 0.9;">Konvex Jr</small>
+                    </div>
+                    <div class="card-body">
+                        <form id="formCadastro">
+                            @Html.AntiForgeryToken()
+                            
+                            <div class="mb-3">
+                                <label asp-for="Nome" class="form-label">
+                                    <i class="bi bi-person me-1"></i>Nome Completo
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                    <input asp-for="Nome" class="form-control" placeholder="Digite seu nome completo" />
+                                </div>
+                                <span asp-validation-for="Nome" class="text-danger small"></span>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label asp-for="Email" class="form-label">
+                                    <i class="bi bi-envelope me-1"></i>E-mail
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                    <input asp-for="Email" class="form-control" placeholder="seu@email.com" />
+                                </div>
+                                <span asp-validation-for="Email" class="text-danger small"></span>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label asp-for="Senha" class="form-label">
+                                    <i class="bi bi-lock me-1"></i>Senha
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                    <input asp-for="Senha" class="form-control" placeholder="Mínimo 6 caracteres" />
+                                </div>
+                                <span asp-validation-for="Senha" class="text-danger small"></span>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label asp-for="ConfirmarSenha" class="form-label">
+                                    <i class="bi bi-lock-fill me-1"></i>Confirmar Senha
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                                    <input asp-for="ConfirmarSenha" class="form-control" placeholder="Digite a senha novamente" />
+                                </div>
+                                <span asp-validation-for="ConfirmarSenha" class="text-danger small"></span>
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="bi bi-check-circle me-2"></i>Cadastrar
+                                </button>
+                                <a asp-action="Login" class="btn btn-link">
+                                    <i class="bi bi-arrow-left me-1"></i>Já tem conta? Faça login
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@3.2.12/dist/jquery.validate.unobtrusive.min.js"></script>
+    
+    <script>
+        $(document).ready(function() {
+            $('#formCadastro').on('submit', function(e) {
+                e.preventDefault();
+                
+                if (!$(this).valid()) {
+                    return;
+                }
+                
+                var formData = $(this).serialize();
+                
+                $.ajax({
+                    url: '@Url.Action("Cadastro", "Usuario")',
+                    type: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Sucesso!',
+                                text: response.message,
+                                confirmButtonColor: '#FF6B4A',
+                                confirmButtonText: 'OK',
+                                iconColor: '#FF6B4A'
+                            }).then((result) => {
+                                window.location.href = '@Url.Action("Login", "Usuario")';
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Erro!',
+                                html: response.message,
+                                confirmButtonColor: '#FF6B4A',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    },
+                    error: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Erro!',
+                            text: 'Ocorreu um erro ao processar sua solicitação.',
+                            confirmButtonColor: '#FF6B4A',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
