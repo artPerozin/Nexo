@@ -17,6 +17,7 @@ namespace Nexo.Controllers
             _authHelper = new AuthorizationHelper(context);
         }
 
+        [Permissao("dashboard.visualizar")]
         public async Task<IActionResult> Index()
         {
             var usuarioId = HttpContext.Session.GetInt32("UsuarioId");
@@ -36,53 +37,103 @@ namespace Nexo.Controllers
                 return RedirectToAction("Login", "Usuario");
             }
 
-            // Redireciona para a dashboard específica baseada no role
-            return usuario.Role.Nome switch
+            // Métricas Gerais
+            var projetosAtivos = await _context.Projetos.CountAsync(p => p.Status != "Concluído");
+            var dealsAbertos = await _context.Deals.CountAsync(d => d.Estagio != "Fechado");
+            
+            var transacoes = await _context.Transacoes.ToListAsync();
+            var receitaTotal = transacoes.Where(t => t.Tipo == "Receita").Sum(t => t.Valor);
+            var despesaTotal = transacoes.Where(t => t.Tipo == "Despesa").Sum(t => t.Valor);
+            var saldo = receitaTotal - despesaTotal;
+
+            // Pipeline
+            var pipelineValor = await _context.Deals
+                .Where(d => d.Estagio != "Fechado")
+                .SumAsync(d => d.Valor);
+
+            // Últimas transações
+            var ultimasTransacoes = await _context.Transacoes
+                .Include(t => t.CriadoPor)
+                .OrderByDescending(t => t.Data)
+                .Take(5)
+                .ToListAsync();
+
+            // Projetos recentes
+            var projetosRecentes = await _context.Projetos
+                .Include(p => p.Responsavel)
+                .OrderByDescending(p => p.DataCriacao)
+                .Take(5)
+                .ToListAsync();
+
+            ViewBag.ProjetosAtivos = projetosAtivos;
+            ViewBag.DealsAbertos = dealsAbertos;
+            ViewBag.Pipeline = pipelineValor;
+            ViewBag.Saldo = saldo;
+            ViewBag.ReceitaTotal = receitaTotal;
+            ViewBag.DespesaTotal = despesaTotal;
+            ViewBag.UltimasTransacoes = ultimasTransacoes;
+            ViewBag.ProjetosRecentes = projetosRecentes;
+            ViewBag.Usuario = usuario;
+
+            return View();
+        }
+
+        [Permissao("dashboard.visualizar")]
+        public async Task<IActionResult> ObterMetricas()
+        {
+            var metricas = new
             {
-                "Admin" => View("Admin"),
-                "Gerente" => View("Gerente"),
-                "Usuario" => View("Usuario"),
-                _ => View("Usuario")
+                projetos = new
+                {
+                    total = await _context.Projetos.CountAsync(),
+                    ativos = await _context.Projetos.CountAsync(p => p.Status == "Em andamento"),
+                    planejamento = await _context.Projetos.CountAsync(p => p.Status == "Planejamento"),
+                    concluidos = await _context.Projetos.CountAsync(p => p.Status == "Concluído")
+                },
+                vendas = new
+                {
+                    total = await _context.Deals.CountAsync(),
+                    valorTotal = await _context.Deals.SumAsync(d => d.Valor),
+                    fechados = await _context.Deals.CountAsync(d => d.Estagio == "Fechado"),
+                    pipeline = await _context.Deals.Where(d => d.Estagio != "Fechado").SumAsync(d => d.Valor),
+                    porEstagio = await _context.Deals
+                        .GroupBy(d => d.Estagio)
+                        .Select(g => new { estagio = g.Key, quantidade = g.Count(), valor = g.Sum(d => d.Valor) })
+                        .ToListAsync()
+                },
+                financeiro = new
+                {
+                    receita = await _context.Transacoes.Where(t => t.Tipo == "Receita").SumAsync(t => t.Valor),
+                    despesa = await _context.Transacoes.Where(t => t.Tipo == "Despesa").SumAsync(t => t.Valor),
+                    pendente = await _context.Transacoes.Where(t => t.Status == "Pendente").SumAsync(t => t.Valor),
+                    vencido = await _context.Transacoes.Where(t => t.Status == "Vencido").SumAsync(t => t.Valor)
+                }
             };
+
+            return Json(metricas);
         }
 
-        [Permissao("dashboard.admin")]
-        public async Task<IActionResult> Admin()
+        [Permissao("dashboard.visualizar")]
+        public async Task<IActionResult> ObterGraficoFinanceiro(int meses = 6)
         {
-            var totalUsuarios = await _context.Usuarios.CountAsync();
-            var usuariosAtivos = await _context.Usuarios.CountAsync(u => u.Ativo);
-            var totalRoles = await _context.Roles.CountAsync();
-            var totalPermissoes = await _context.Permissoes.CountAsync();
+            var dataInicio = DateTime.Now.AddMonths(-meses);
+            
+            var transacoes = await _context.Transacoes
+                .Where(t => t.Data >= dataInicio)
+                .ToListAsync();
 
-            ViewBag.TotalUsuarios = totalUsuarios;
-            ViewBag.UsuariosAtivos = usuariosAtivos;
-            ViewBag.TotalRoles = totalRoles;
-            ViewBag.TotalPermissoes = totalPermissoes;
+            var dadosPorMes = transacoes
+                .GroupBy(t => new { t.Data.Year, t.Data.Month })
+                .Select(g => new
+                {
+                    mes = $"{g.Key.Year}-{g.Key.Month:D2}",
+                    receita = g.Where(t => t.Tipo == "Receita").Sum(t => t.Valor),
+                    despesa = g.Where(t => t.Tipo == "Despesa").Sum(t => t.Valor)
+                })
+                .OrderBy(x => x.mes)
+                .ToList();
 
-            return View();
-        }
-
-        [Permissao("dashboard.gerente")]
-        public async Task<IActionResult> Gerente()
-        {
-            var totalUsuarios = await _context.Usuarios.CountAsync();
-            var usuariosAtivos = await _context.Usuarios.CountAsync(u => u.Ativo);
-
-            ViewBag.TotalUsuarios = totalUsuarios;
-            ViewBag.UsuariosAtivos = usuariosAtivos;
-
-            return View();
-        }
-
-        [Permissao("dashboard.usuario")]
-        public async Task<IActionResult> Usuario()
-        {
-            var usuarioId = HttpContext.Session.GetInt32("UsuarioId");
-            var usuario = await _context.Usuarios
-                .Include(u => u.Role)
-                .FirstOrDefaultAsync(u => u.Id == usuarioId);
-
-            return View(usuario);
+            return Json(dadosPorMes);
         }
     }
 }

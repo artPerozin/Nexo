@@ -1,0 +1,597 @@
+@{
+    ViewData["Title"] = "Dashboard";
+    var usuarioNome = Context.Session.GetString("UsuarioNome");
+}
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - ERP Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary: #2B4C7E;
+            --secondary: #567EBB;
+            --accent: #DCE4F2;
+            --dark: #1a1f36;
+            --text: #2d3748;
+            --border: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f8fafc;
+            color: var(--text);
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: var(--dark);
+            padding: 0;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: white;
+            text-decoration: none;
+        }
+
+        .sidebar-logo i {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .sidebar-logo span {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .sidebar-nav {
+            padding: 1rem 0;
+        }
+
+        .nav-item {
+            list-style: none;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1.5rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: white;
+            background: rgba(255, 255, 255, 0.05);
+            border-left-color: var(--secondary);
+        }
+
+        .nav-link i {
+            font-size: 1.125rem;
+            width: 20px;
+        }
+
+        .main-content {
+            margin-left: 280px;
+            min-height: 100vh;
+        }
+
+        .topbar {
+            background: white;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .topbar-title h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin: 0;
+        }
+
+        .topbar-title p {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin: 0;
+        }
+
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn-logout {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-logout:hover {
+            background: #f8fafc;
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .content-wrapper {
+            padding: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            transition: all 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .stat-title {
+            font-size: 0.875rem;
+            color: #64748b;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-change {
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .stat-change.positive {
+            color: #10b981;
+        }
+
+        .stat-change.negative {
+            color: #ef4444;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            background: #f8fafc;
+        }
+
+        .card-header h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin: 0;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .transaction-item,
+        .project-item {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .transaction-item:last-child,
+        .project-item:last-child {
+            border-bottom: none;
+        }
+
+        .transaction-item:hover,
+        .project-item:hover {
+            background: #f8fafc;
+        }
+
+        .transaction-info h4,
+        .project-info h4 {
+            font-size: 0.9375rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin: 0 0 0.25rem 0;
+        }
+
+        .transaction-info p,
+        .project-info p {
+            font-size: 0.8125rem;
+            color: #64748b;
+            margin: 0;
+        }
+
+        .transaction-value {
+            text-align: right;
+        }
+
+        .transaction-amount {
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .transaction-amount.income {
+            color: #10b981;
+        }
+
+        .transaction-amount.expense {
+            color: #ef4444;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-blue {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .badge-green {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-orange {
+            background: #fed7aa;
+            color: #9a3412;
+        }
+
+        .badge-yellow {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 6px;
+            background: #f1f5f9;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+
+        @@media (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @@media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <a href="@Url.Action("Index", "Dashboard")" class="sidebar-logo">
+                <i class="bi bi-hexagon-fill"></i>
+                <span>ERP Pro</span>
+            </a>
+        </div>
+        <ul class="sidebar-nav">
+            <li class="nav-item">
+                <a href="@Url.Action("Index", "Dashboard")" class="nav-link active">
+                    <i class="bi bi-speedometer2"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="@Url.Action("Index", "Projetos")" class="nav-link">
+                    <i class="bi bi-kanban"></i>
+                    <span>Projetos</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="@Url.Action("Index", "Vendas")" class="nav-link">
+                    <i class="bi bi-graph-up"></i>
+                    <span>Vendas</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="@Url.Action("Index", "Financeiro")" class="nav-link">
+                    <i class="bi bi-wallet2"></i>
+                    <span>Financeiro</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="bi bi-people"></i>
+                    <span>Usuários</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="bi bi-shield-lock"></i>
+                    <span>Perfis</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Topbar -->
+        <div class="topbar">
+            <div class="topbar-title">
+                <h1>Dashboard</h1>
+                <p>Visão geral do seu negócio</p>
+            </div>
+            <div class="topbar-actions">
+                <a href="@Url.Action("Logout", "Usuario")" class="btn-logout">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>Sair</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="content-wrapper">
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-title">Projetos Ativos</div>
+                        </div>
+                        <div class="stat-icon" style="background: #dbeafe; color: #1e40af;">
+                            <i class="bi bi-kanban"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">@ViewBag.ProjetosAtivos</div>
+                    <div class="stat-change positive">
+                        <i class="bi bi-arrow-up"></i>
+                        <span>Em andamento</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-title">Deals Abertos</div>
+                        </div>
+                        <div class="stat-icon" style="background: #fef3c7; color: #92400e;">
+                            <i class="bi bi-graph-up"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">@ViewBag.DealsAbertos</div>
+                    <div class="stat-change">
+                        <span>No funil</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-title">Pipeline</div>
+                        </div>
+                        <div class="stat-icon" style="background: #fed7aa; color: #9a3412;">
+                            <i class="bi bi-cash-stack"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">R$ @ViewBag.Pipeline.ToString("N2")</div>
+                    <div class="stat-change">
+                        <span>Valor total</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-title">Saldo</div>
+                        </div>
+                        <div class="stat-icon" style="background: #d1fae5; color: #065f46;">
+                            <i class="bi bi-wallet2"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">R$ @ViewBag.Saldo.ToString("N2")</div>
+                    <div class="stat-change @(ViewBag.Saldo >= 0 ? "positive" : "negative")">
+                        <i class="bi bi-arrow-@(ViewBag.Saldo >= 0 ? "up" : "down")"></i>
+                        <span>Receitas - Despesas</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Grid -->
+            <div class="content-grid">
+                <!-- Projetos Recentes -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Projetos recentes</h3>
+                    </div>
+                    <div class="card-body" style="padding: 0;">
+                        @if (ViewBag.ProjetosRecentes != null && ViewBag.ProjetosRecentes.Count > 0)
+                        {
+                            @foreach (var projeto in ViewBag.ProjetosRecentes)
+                            {
+                                <div class="project-item">
+                                    <div class="project-info">
+                                        <h4>@projeto.Nome</h4>
+                                        <p>@projeto.DataInicio.ToString("dd/MM/yyyy")</p>
+                                        <div class="progress-bar-container">
+                                            <div class="progress-bar" style="width: @projeto.Progresso%"></div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <span class="badge @(
+                                            projeto.Status == "Em andamento" ? "badge-blue" :
+                                            projeto.Status == "Planejamento" ? "badge-yellow" :
+                                            "badge-green"
+                                        )">@projeto.Status</span>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div style="padding: 2rem; text-align: center; color: #64748b;">
+                                <i class="bi bi-inbox" style="font-size: 2rem; display: block; margin-bottom: 0.5rem;"></i>
+                                Nenhum projeto cadastrado
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Últimas Transações -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Últimas transações</h3>
+                    </div>
+                    <div class="card-body" style="padding: 0;">
+                        @if (ViewBag.UltimasTransacoes != null && ViewBag.UltimasTransacoes.Count > 0)
+                        {
+                            @foreach (var transacao in ViewBag.UltimasTransacoes)
+                            {
+                                <div class="transaction-item">
+                                    <div class="transaction-info">
+                                        <h4>@transacao.Descricao</h4>
+                                        <p>@transacao.Data.ToString("dd/MM/yyyy")</p>
+                                    </div>
+                                    <div class="transaction-value">
+                                        <div class="transaction-amount @(transacao.Tipo == "Receita" ? "income" : "expense")">
+                                            @(transacao.Tipo == "Receita" ? "+ " : "- ")R$ @transacao.Valor.ToString("N2")
+                                        </div>
+                                        <span class="badge @(
+                                            transacao.Status == "Pago" ? "badge-green" :
+                                            transacao.Status == "Pendente" ? "badge-yellow" :
+                                            "badge-orange"
+                                        )">@transacao.Status</span>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div style="padding: 2rem; text-align: center; color: #64748b;">
+                                <i class="bi bi-inbox" style="font-size: 2rem; display: block; margin-bottom: 0.5rem;"></i>
+                                Nenhuma transação registrada
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

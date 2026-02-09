@@ -9,6 +9,10 @@ namespace Nexo.Data
         public DbSet<Role> Roles { get; set; }
         public DbSet<Permissao> Permissoes { get; set; }
         public DbSet<RolePermissao> RolePermissoes { get; set; }
+        public DbSet<Projeto> Projetos { get; set; }
+        public DbSet<Tarefa> Tarefas { get; set; }
+        public DbSet<Deal> Deals { get; set; }
+        public DbSet<Transacao> Transacoes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -45,7 +49,6 @@ namespace Nexo.Data
                     .IsRequired()
                     .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                // 🔥 RELAÇÃO CORRETA Usuario -> Role
                 entity.HasOne(u => u.Role)
                     .WithMany(r => r.Usuarios)
                     .HasForeignKey(u => u.RoleId)
@@ -87,7 +90,7 @@ namespace Nexo.Data
             });
 
             // ======================
-            // RolePermissao (JOIN TABLE)
+            // RolePermissao
             // ======================
             modelBuilder.Entity<RolePermissao>(entity =>
             {
@@ -110,26 +113,157 @@ namespace Nexo.Data
             });
 
             // ======================
+            // Projeto
+            // ======================
+            modelBuilder.Entity<Projeto>(entity =>
+            {
+                entity.ToTable("projetos");
+
+                entity.HasKey(p => p.Id);
+
+                entity.Property(p => p.Nome)
+                    .IsRequired()
+                    .HasMaxLength(200);
+
+                entity.Property(p => p.Status)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.HasOne(p => p.Responsavel)
+                    .WithMany()
+                    .HasForeignKey(p => p.ResponsavelId)
+                    .OnDelete(DeleteBehavior.SetNull);
+            });
+
+            // ======================
+            // Tarefa
+            // ======================
+            modelBuilder.Entity<Tarefa>(entity =>
+            {
+                entity.ToTable("tarefas");
+
+                entity.HasKey(t => t.Id);
+
+                entity.Property(t => t.Titulo)
+                    .IsRequired()
+                    .HasMaxLength(200);
+
+                entity.HasOne(t => t.Projeto)
+                    .WithMany(p => p.Tarefas)
+                    .HasForeignKey(t => t.ProjetoId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(t => t.Responsavel)
+                    .WithMany()
+                    .HasForeignKey(t => t.ResponsavelId)
+                    .OnDelete(DeleteBehavior.SetNull);
+            });
+
+            // ======================
+            // Deal
+            // ======================
+            modelBuilder.Entity<Deal>(entity =>
+            {
+                entity.ToTable("deals");
+
+                entity.HasKey(d => d.Id);
+
+                entity.Property(d => d.Nome)
+                    .IsRequired()
+                    .HasMaxLength(200);
+
+                entity.Property(d => d.Estagio)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.HasOne(d => d.Responsavel)
+                    .WithMany()
+                    .HasForeignKey(d => d.ResponsavelId)
+                    .OnDelete(DeleteBehavior.SetNull);
+            });
+
+            // ======================
+            // Transacao
+            // ======================
+            modelBuilder.Entity<Transacao>(entity =>
+            {
+                entity.ToTable("transacoes");
+
+                entity.HasKey(t => t.Id);
+
+                entity.Property(t => t.Descricao)
+                    .IsRequired()
+                    .HasMaxLength(200);
+
+                entity.Property(t => t.Tipo)
+                    .IsRequired()
+                    .HasMaxLength(20);
+
+                entity.Property(t => t.Categoria)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.HasOne(t => t.Projeto)
+                    .WithMany()
+                    .HasForeignKey(t => t.ProjetoId)
+                    .OnDelete(DeleteBehavior.SetNull);
+
+                entity.HasOne(t => t.Deal)
+                    .WithMany()
+                    .HasForeignKey(t => t.DealId)
+                    .OnDelete(DeleteBehavior.SetNull);
+
+                entity.HasOne(t => t.CriadoPor)
+                    .WithMany()
+                    .HasForeignKey(t => t.CriadoPorId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // ======================
             // SEEDS
             // ======================
             modelBuilder.Entity<Role>().HasData(
-                new Role { Id = 1, Nome = "Admin", Descricao = "Administrador do sistema com acesso total" },
-                new Role { Id = 2, Nome = "Gerente", Descricao = "Gerente com permissões de gestão" },
-                new Role { Id = 3, Nome = "Usuario", Descricao = "Usuário padrão do sistema" }
+                new Role { Id = 1, Nome = "Admin", Descricao = "Administrador Total" },
+                new Role { Id = 2, Nome = "Vendedor", Descricao = "Acesso a vendas e projetos" },
+                new Role { Id = 3, Nome = "Financeiro", Descricao = "Acesso ao financeiro" }
             );
 
             modelBuilder.Entity<Permissao>().HasData(
-                new Permissao { Id = 1, Nome = "usuarios.listar", Descricao = "Listar usuários" },
-                new Permissao { Id = 2, Nome = "usuarios.criar", Descricao = "Criar usuários" },
-                new Permissao { Id = 3, Nome = "usuarios.editar", Descricao = "Editar usuários" },
-                new Permissao { Id = 4, Nome = "usuarios.excluir", Descricao = "Excluir usuários" },
-                new Permissao { Id = 5, Nome = "relatorios.visualizar", Descricao = "Visualizar relatórios" },
-                new Permissao { Id = 6, Nome = "relatorios.gerar", Descricao = "Gerar relatórios" },
-                new Permissao { Id = 7, Nome = "dashboard.admin", Descricao = "Dashboard Admin" },
-                new Permissao { Id = 8, Nome = "dashboard.gerente", Descricao = "Dashboard Gerente" },
-                new Permissao { Id = 9, Nome = "dashboard.usuario", Descricao = "Dashboard Usuário" }
+                // Dashboard
+                new Permissao { Id = 1, Nome = "dashboard.visualizar", Descricao = "Visualizar Dashboard" },
+                
+                // Projetos
+                new Permissao { Id = 2, Nome = "projetos.listar", Descricao = "Listar Projetos" },
+                new Permissao { Id = 3, Nome = "projetos.criar", Descricao = "Criar Projetos" },
+                new Permissao { Id = 4, Nome = "projetos.editar", Descricao = "Editar Projetos" },
+                new Permissao { Id = 5, Nome = "projetos.excluir", Descricao = "Excluir Projetos" },
+                
+                // Vendas
+                new Permissao { Id = 6, Nome = "vendas.listar", Descricao = "Listar Vendas" },
+                new Permissao { Id = 7, Nome = "vendas.criar", Descricao = "Criar Vendas" },
+                new Permissao { Id = 8, Nome = "vendas.editar", Descricao = "Editar Vendas" },
+                new Permissao { Id = 9, Nome = "vendas.excluir", Descricao = "Excluir Vendas" },
+                
+                // Financeiro
+                new Permissao { Id = 10, Nome = "financeiro.visualizar", Descricao = "Visualizar Financeiro" },
+                new Permissao { Id = 11, Nome = "financeiro.criar", Descricao = "Criar Transações" },
+                new Permissao { Id = 12, Nome = "financeiro.editar", Descricao = "Editar Transações" },
+                new Permissao { Id = 13, Nome = "financeiro.excluir", Descricao = "Excluir Transações" },
+                
+                // Usuários
+                new Permissao { Id = 14, Nome = "usuarios.listar", Descricao = "Listar Usuários" },
+                new Permissao { Id = 15, Nome = "usuarios.criar", Descricao = "Criar Usuários" },
+                new Permissao { Id = 16, Nome = "usuarios.editar", Descricao = "Editar Usuários" },
+                new Permissao { Id = 17, Nome = "usuarios.excluir", Descricao = "Excluir Usuários" },
+                
+                // Perfis
+                new Permissao { Id = 18, Nome = "perfis.listar", Descricao = "Listar Perfis" },
+                new Permissao { Id = 19, Nome = "perfis.criar", Descricao = "Criar Perfis" },
+                new Permissao { Id = 20, Nome = "perfis.editar", Descricao = "Editar Perfis" },
+                new Permissao { Id = 21, Nome = "perfis.excluir", Descricao = "Excluir Perfis" }
             );
 
+            // Admin tem todas as permissões
             modelBuilder.Entity<RolePermissao>().HasData(
                 new RolePermissao { Id = 1, RoleId = 1, PermissaoId = 1 },
                 new RolePermissao { Id = 2, RoleId = 1, PermissaoId = 2 },
@@ -138,13 +272,36 @@ namespace Nexo.Data
                 new RolePermissao { Id = 5, RoleId = 1, PermissaoId = 5 },
                 new RolePermissao { Id = 6, RoleId = 1, PermissaoId = 6 },
                 new RolePermissao { Id = 7, RoleId = 1, PermissaoId = 7 },
-
-                new RolePermissao { Id = 8, RoleId = 2, PermissaoId = 1 },
-                new RolePermissao { Id = 9, RoleId = 2, PermissaoId = 5 },
-                new RolePermissao { Id = 10, RoleId = 2, PermissaoId = 6 },
-                new RolePermissao { Id = 11, RoleId = 2, PermissaoId = 8 },
-
-                new RolePermissao { Id = 12, RoleId = 3, PermissaoId = 9 }
+                new RolePermissao { Id = 8, RoleId = 1, PermissaoId = 8 },
+                new RolePermissao { Id = 9, RoleId = 1, PermissaoId = 9 },
+                new RolePermissao { Id = 10, RoleId = 1, PermissaoId = 10 },
+                new RolePermissao { Id = 11, RoleId = 1, PermissaoId = 11 },
+                new RolePermissao { Id = 12, RoleId = 1, PermissaoId = 12 },
+                new RolePermissao { Id = 13, RoleId = 1, PermissaoId = 13 },
+                new RolePermissao { Id = 14, RoleId = 1, PermissaoId = 14 },
+                new RolePermissao { Id = 15, RoleId = 1, PermissaoId = 15 },
+                new RolePermissao { Id = 16, RoleId = 1, PermissaoId = 16 },
+                new RolePermissao { Id = 17, RoleId = 1, PermissaoId = 17 },
+                new RolePermissao { Id = 18, RoleId = 1, PermissaoId = 18 },
+                new RolePermissao { Id = 19, RoleId = 1, PermissaoId = 19 },
+                new RolePermissao { Id = 20, RoleId = 1, PermissaoId = 20 },
+                new RolePermissao { Id = 21, RoleId = 1, PermissaoId = 21 },
+                
+                // Vendedor - Dashboard, Projetos e Vendas
+                new RolePermissao { Id = 22, RoleId = 2, PermissaoId = 1 },
+                new RolePermissao { Id = 23, RoleId = 2, PermissaoId = 2 },
+                new RolePermissao { Id = 24, RoleId = 2, PermissaoId = 3 },
+                new RolePermissao { Id = 25, RoleId = 2, PermissaoId = 4 },
+                new RolePermissao { Id = 26, RoleId = 2, PermissaoId = 6 },
+                new RolePermissao { Id = 27, RoleId = 2, PermissaoId = 7 },
+                new RolePermissao { Id = 28, RoleId = 2, PermissaoId = 8 },
+                
+                // Financeiro - Dashboard e Financeiro
+                new RolePermissao { Id = 29, RoleId = 3, PermissaoId = 1 },
+                new RolePermissao { Id = 30, RoleId = 3, PermissaoId = 10 },
+                new RolePermissao { Id = 31, RoleId = 3, PermissaoId = 11 },
+                new RolePermissao { Id = 32, RoleId = 3, PermissaoId = 12 },
+                new RolePermissao { Id = 33, RoleId = 3, PermissaoId = 13 }
             );
         }
     }
