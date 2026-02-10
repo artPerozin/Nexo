@@ -10,9 +10,6 @@ namespace Nexo.Data
         public DbSet<Permissao> Permissoes { get; set; }
         public DbSet<RolePermissao> RolePermissoes { get; set; }
         public DbSet<Projeto> Projetos { get; set; }
-        public DbSet<Tarefa> Tarefas { get; set; }
-        public DbSet<Deal> Deals { get; set; }
-        public DbSet<Transacao> Transacoes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -133,90 +130,6 @@ namespace Nexo.Data
                     .WithMany()
                     .HasForeignKey(p => p.ResponsavelId)
                     .OnDelete(DeleteBehavior.SetNull);
-            });
-
-            // ======================
-            // Tarefa
-            // ======================
-            modelBuilder.Entity<Tarefa>(entity =>
-            {
-                entity.ToTable("tarefas");
-
-                entity.HasKey(t => t.Id);
-
-                entity.Property(t => t.Titulo)
-                    .IsRequired()
-                    .HasMaxLength(200);
-
-                entity.HasOne(t => t.Projeto)
-                    .WithMany(p => p.Tarefas)
-                    .HasForeignKey(t => t.ProjetoId)
-                    .OnDelete(DeleteBehavior.Cascade);
-
-                entity.HasOne(t => t.Responsavel)
-                    .WithMany()
-                    .HasForeignKey(t => t.ResponsavelId)
-                    .OnDelete(DeleteBehavior.SetNull);
-            });
-
-            // ======================
-            // Deal
-            // ======================
-            modelBuilder.Entity<Deal>(entity =>
-            {
-                entity.ToTable("deals");
-
-                entity.HasKey(d => d.Id);
-
-                entity.Property(d => d.Nome)
-                    .IsRequired()
-                    .HasMaxLength(200);
-
-                entity.Property(d => d.Estagio)
-                    .IsRequired()
-                    .HasMaxLength(50);
-
-                entity.HasOne(d => d.Responsavel)
-                    .WithMany()
-                    .HasForeignKey(d => d.ResponsavelId)
-                    .OnDelete(DeleteBehavior.SetNull);
-            });
-
-            // ======================
-            // Transacao
-            // ======================
-            modelBuilder.Entity<Transacao>(entity =>
-            {
-                entity.ToTable("transacoes");
-
-                entity.HasKey(t => t.Id);
-
-                entity.Property(t => t.Descricao)
-                    .IsRequired()
-                    .HasMaxLength(200);
-
-                entity.Property(t => t.Tipo)
-                    .IsRequired()
-                    .HasMaxLength(20);
-
-                entity.Property(t => t.Categoria)
-                    .IsRequired()
-                    .HasMaxLength(100);
-
-                entity.HasOne(t => t.Projeto)
-                    .WithMany()
-                    .HasForeignKey(t => t.ProjetoId)
-                    .OnDelete(DeleteBehavior.SetNull);
-
-                entity.HasOne(t => t.Deal)
-                    .WithMany()
-                    .HasForeignKey(t => t.DealId)
-                    .OnDelete(DeleteBehavior.SetNull);
-
-                entity.HasOne(t => t.CriadoPor)
-                    .WithMany()
-                    .HasForeignKey(t => t.CriadoPorId)
-                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             // ======================

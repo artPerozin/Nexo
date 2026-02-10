@@ -330,19 +330,13 @@
                     data: formData,
                     success: function(response) {
                         if (response.success) {
-                            if (response.success) {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Bem-vindo!',
-                                    text: response.message,
-                                    confirmButtonColor: '#FF6B4A',
-                                    confirmButtonText: 'OK',
-                                    iconColor: '#FF6B4A',
-                                    timer: 2000
-                                }).then((result) => {
-                                    window.location.href = '@Url.Action("Index", "Dashboard")'; // Alterado aqui
-                                });
-                            }
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Bem-vindo!',
+                                text: response.message,
+                            }).then((result) => {
+                                window.location.href = '@Url.Action("Index", "Dashboard")';
+                            });
                         } else {
                             Swal.fire({
                                 icon: 'error',
