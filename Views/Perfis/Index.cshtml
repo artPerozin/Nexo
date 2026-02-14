@@ -10,7 +10,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - ERP Pro</title>
+    <title>@ViewData["Title"] - Nexo ERP</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
@@ -462,7 +462,7 @@
         <div class="sidebar-header">
             <a href="@Url.Action("Index", "Dashboard")" class="sidebar-logo">
                 <i class="bi bi-hexagon-fill"></i>
-                <span>ERP Pro</span>
+                <span>Nexo ERP</span>
             </a>
         </div>
         <ul class="sidebar-nav">
@@ -491,7 +491,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="@Url.Action("Index", "Usuarios")" class="nav-link">
+                <a href="@Url.Action("Index", "Usuario")" class="nav-link">
                     <i class="bi bi-people"></i>
                     <span>Usuários</span>
                 </a>
@@ -699,7 +699,7 @@
             });
 
             const data = await response.json();
-            
+            closeModal();
             if (data.success) {
                 Swal.fire({
                     icon: 'success',

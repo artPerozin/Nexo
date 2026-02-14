@@ -202,5 +202,17 @@ namespace Nexo.Controllers
 
             return Success($"Usuário {(usuario.Ativo ? "ativado" : "desativado")} com sucesso.");
         }
+
+        [HttpGet]
+        public async Task<IActionResult> ObterUsuario(int id)
+        {
+            var usuario = await _context.Usuarios
+                .FirstOrDefaultAsync(u => u.Id == id);
+
+            if (usuario == null)
+                return NotFound();
+
+            return Json(usuario);
+        }
     }
 }

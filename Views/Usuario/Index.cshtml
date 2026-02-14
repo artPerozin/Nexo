@@ -10,7 +10,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - ERP Pro</title>
+    <title>@ViewData["Title"] - Nexo ERP</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
@@ -441,7 +441,7 @@
         <div class="sidebar-header">
             <a href="@Url.Action("Index", "Dashboard")" class="sidebar-logo">
                 <i class="bi bi-hexagon-fill"></i>
-                <span>ERP Pro</span>
+                <span>Nexo ERP</span>
             </a>
         </div>
         <ul class="sidebar-nav">
@@ -470,7 +470,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="@Url.Action("Index", "Usuarios")" class="nav-link active">
+                <a href="@Url.Action("Index", "Usuario")" class="nav-link active">
                     <i class="bi bi-people"></i>
                     <span>Usuários</span>
                 </a>
@@ -555,10 +555,17 @@
                                     <button class="btn-icon" onclick="editUser(@usuario.Id)" title="Editar">
                                         <i class="bi bi-pencil"></i>
                                     </button>
-                                    <button class="btn-icon btn-danger" onclick="deleteUser(@usuario.Id)" title="Excluir">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
                                 </td>
+                                <td>
+                                    <div class="form-check form-switch d-flex justify-content-center">
+                                        <input class="form-check-input"
+                                            type="checkbox"
+                                            role="switch"
+                                            @(usuario.Ativo ? "checked" : "")
+                                            onchange="toggleUserStatus(@usuario.Id, this)">
+                                    </div>
+                                </td>
+
                             </tr>
                         }
                     </tbody>
@@ -640,28 +647,40 @@
         }
 
         async function editUser(id) {
-            const response = await fetch(`/Usuarios/ObterUsuario?id=${id}`);
+            const response = await fetch(`/Usuario/ObterUsuario?id=${id}`);
             const data = await response.json();
-            
-            if (data.success) {
+
+            if (data) {
+                const usuario = data;
+
                 document.getElementById('modalTitle').textContent = 'Editar Usuário';
-                document.getElementById('usuarioId').value = data.usuario.id;
-                document.getElementById('nome').value = data.usuario.nome;
-                document.getElementById('email').value = data.usuario.email;
-                document.getElementById('roleId').value = data.usuario.roleId;
-                document.getElementById('ativo').checked = data.usuario.ativo;
+                document.getElementById('usuarioId').value = usuario.id;
+                document.getElementById('nome').value = usuario.nome;
+                document.getElementById('email').value = usuario.email;
+                document.getElementById('roleId').value = usuario.roleId;
+                document.getElementById('ativo').checked = usuario.ativo;
+
                 document.getElementById('senha').value = '';
                 document.getElementById('senha').required = false;
                 document.getElementById('senhaHint').style.display = 'block';
                 document.getElementById('ativoGroup').style.display = 'block';
+
                 document.getElementById('userModal').classList.add('show');
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro!',
+                    text: data.message,
+                    confirmButtonColor: '#2B4C7E'
+                });
             }
         }
 
         async function saveUser() {
+
             const id = document.getElementById('usuarioId').value;
             const senha = document.getElementById('senha').value;
-            
+
             if (!id && !senha) {
                 Swal.fire({
                     icon: 'error',
@@ -681,18 +700,46 @@
                 ativo: id ? document.getElementById('ativo').checked : true
             };
 
-            const url = id ? '/Usuarios/Editar' : '/Usuarios/Criar';
-            
+            const url = id ? '/Usuario/Editar' : '/Usuario/Criar';
+
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(usuario)
             });
 
             const data = await response.json();
-            
+            closeModal();
+            if (data.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Sucesso!',
+                    text: data.message,
+                    confirmButtonColor: '#2B4C7E'
+                }).then(() => location.reload());
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro!',
+                    text: data.message,
+                    confirmButtonColor: '#2B4C7E'
+                });
+            }
+        }
+
+        async function toggleUserStatus(id) {
+            const response = await fetch('/Usuario/AlterarStatus', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `id=${id}`
+            });
+
+            const data = await response.json();
+
             if (data.success) {
                 Swal.fire({
                     icon: 'success',
@@ -712,48 +759,6 @@
             }
         }
 
-        async function deleteUser(id) {
-            const result = await Swal.fire({
-                title: 'Tem certeza?',
-                text: 'Você não poderá reverter esta ação!',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#ef4444',
-                cancelButtonColor: '#64748b',
-                confirmButtonText: 'Sim, excluir!',
-                cancelButtonText: 'Cancelar'
-            });
-
-            if (result.isConfirmed) {
-                const response = await fetch('/Usuarios/Excluir', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: `id=${id}`
-                });
-
-                const data = await response.json();
-                
-                if (data.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Excluído!',
-                        text: data.message,
-                        confirmButtonColor: '#2B4C7E'
-                    }).then(() => {
-                        location.reload();
-                    });
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Erro!',
-                        text: data.message,
-                        confirmButtonColor: '#2B4C7E'
-                    });
-                }
-            }
-        }
     </script>
 </body>
 </html>
