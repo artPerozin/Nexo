@@ -43,6 +43,5 @@ namespace Nexo.Models
         
         public DateTime? DataAtualizacao { get; set; }
         
-        public virtual ICollection<Tarefa> Tarefas { get; set; } = new List<Tarefa>();
     }
 }

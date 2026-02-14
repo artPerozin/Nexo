@@ -10,7 +10,6 @@ namespace Nexo.Data
         public DbSet<Permissao> Permissoes { get; set; }
         public DbSet<RolePermissao> RolePermissoes { get; set; }
         public DbSet<Projeto> Projetos { get; set; }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -135,6 +134,10 @@ namespace Nexo.Data
             // ======================
             // SEEDS
             // ======================
+            modelBuilder.Entity<Usuario>().HasData(
+                new Usuario { Id = 1, Nome = "Admin", Email = "admin@gmail.com", Senha = "admin123", RoleId = 1 }
+            );
+
             modelBuilder.Entity<Role>().HasData(
                 new Role { Id = 1, Nome = "Admin", Descricao = "Administrador Total" },
                 new Role { Id = 2, Nome = "Vendedor", Descricao = "Acesso a vendas e projetos" },
@@ -142,41 +145,34 @@ namespace Nexo.Data
             );
 
             modelBuilder.Entity<Permissao>().HasData(
-                // Dashboard
                 new Permissao { Id = 1, Nome = "dashboard.visualizar", Descricao = "Visualizar Dashboard" },
                 
-                // Projetos
                 new Permissao { Id = 2, Nome = "projetos.listar", Descricao = "Listar Projetos" },
                 new Permissao { Id = 3, Nome = "projetos.criar", Descricao = "Criar Projetos" },
                 new Permissao { Id = 4, Nome = "projetos.editar", Descricao = "Editar Projetos" },
                 new Permissao { Id = 5, Nome = "projetos.excluir", Descricao = "Excluir Projetos" },
                 
-                // Vendas
                 new Permissao { Id = 6, Nome = "vendas.listar", Descricao = "Listar Vendas" },
                 new Permissao { Id = 7, Nome = "vendas.criar", Descricao = "Criar Vendas" },
                 new Permissao { Id = 8, Nome = "vendas.editar", Descricao = "Editar Vendas" },
                 new Permissao { Id = 9, Nome = "vendas.excluir", Descricao = "Excluir Vendas" },
                 
-                // Financeiro
                 new Permissao { Id = 10, Nome = "financeiro.visualizar", Descricao = "Visualizar Financeiro" },
                 new Permissao { Id = 11, Nome = "financeiro.criar", Descricao = "Criar Transações" },
                 new Permissao { Id = 12, Nome = "financeiro.editar", Descricao = "Editar Transações" },
                 new Permissao { Id = 13, Nome = "financeiro.excluir", Descricao = "Excluir Transações" },
                 
-                // Usuários
                 new Permissao { Id = 14, Nome = "usuarios.listar", Descricao = "Listar Usuários" },
                 new Permissao { Id = 15, Nome = "usuarios.criar", Descricao = "Criar Usuários" },
                 new Permissao { Id = 16, Nome = "usuarios.editar", Descricao = "Editar Usuários" },
                 new Permissao { Id = 17, Nome = "usuarios.excluir", Descricao = "Excluir Usuários" },
                 
-                // Perfis
                 new Permissao { Id = 18, Nome = "perfis.listar", Descricao = "Listar Perfis" },
                 new Permissao { Id = 19, Nome = "perfis.criar", Descricao = "Criar Perfis" },
                 new Permissao { Id = 20, Nome = "perfis.editar", Descricao = "Editar Perfis" },
                 new Permissao { Id = 21, Nome = "perfis.excluir", Descricao = "Excluir Perfis" }
             );
 
-            // Admin tem todas as permissões
             modelBuilder.Entity<RolePermissao>().HasData(
                 new RolePermissao { Id = 1, RoleId = 1, PermissaoId = 1 },
                 new RolePermissao { Id = 2, RoleId = 1, PermissaoId = 2 },
