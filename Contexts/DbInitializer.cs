@@ -1,7 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Nexo.Models;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace Nexo.Contexts
 {
@@ -19,11 +17,13 @@ namespace Nexo.Contexts
             var permissoes = new List<Permissao>
             {
                 new() { Nome = "dashboard.visualizar", Descricao = "Visualizar dashboard" },
-                new() { Nome = "usuarios.visualizar", Descricao = "Visualizar usuários" },
+                new() { Nome = "usuarios.listar", Descricao = "Listar usuários" },
                 new() { Nome = "usuarios.criar", Descricao = "Criar usuários" },
                 new() { Nome = "usuarios.editar", Descricao = "Editar usuários" },
-                new() { Nome = "perfis.visualizar", Descricao = "Visualizar perfis" },
-                new() { Nome = "perfis.criar", Descricao = "Criar perfis" }
+                new() { Nome = "perfis.listar", Descricao = "Listar perfis" },
+                new() { Nome = "perfis.criar", Descricao = "Criar perfis" },
+                new() { Nome = "perfis.editar", Descricao = "Editar perfis" },
+                new() { Nome = "perfis.excluir", Descricao = "Excluir perfis" }
             };
 
             await context.Permissoes.AddRangeAsync(permissoes);
@@ -49,12 +49,12 @@ namespace Nexo.Contexts
             await context.RolePermissoes.AddRangeAsync(rolePermissoes);
             await context.SaveChangesAsync();
 
-            // 👤 4. Criar usuário Admin
+            // 👤 4. Criar usuário Admin (usando BCrypt)
             var adminUser = new Usuario
             {
                 Nome = "Administrador",
                 Email = "admin@nexo.com",
-                Senha = HashSenha("Admin@123"),
+                Senha = BCrypt.Net.BCrypt.HashPassword("Admin@123"),
                 RoleId = adminRole.Id,
                 Ativo = true,
                 CreatedAt = DateTime.UtcNow
@@ -62,15 +62,6 @@ namespace Nexo.Contexts
 
             await context.Usuarios.AddAsync(adminUser);
             await context.SaveChangesAsync();
-        }
-
-        // 🔐 Hash simples (substitua por BCrypt em produção)
-        private static string HashSenha(string senha)
-        {
-            using var sha = SHA256.Create();
-            var bytes = Encoding.UTF8.GetBytes(senha);
-            var hash = sha.ComputeHash(bytes);
-            return Convert.ToBase64String(hash);
         }
     }
 }
