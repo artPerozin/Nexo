@@ -38,8 +38,8 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/peroz/OneDrive/Desktop/UDESC/KonvexJr/Nexo/Views/Projetos/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvamV0b3NcSW5kZXguY3NodG1s
+[C:/Users/peroz/OneDrive/Desktop/UDESC/KonvexJr/Nexo/Views/Perfis/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGVyZmlzXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/peroz/OneDrive/Desktop/UDESC/KonvexJr/Nexo/Views/Shared/AcessoNegado.cshtml]
@@ -52,6 +52,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/peroz/OneDrive/Desktop/UDESC/KonvexJr/Nexo/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/peroz/OneDrive/Desktop/UDESC/KonvexJr/Nexo/Views/Usuario/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXN1YXJpb1xJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/peroz/OneDrive/Desktop/UDESC/KonvexJr/Nexo/Views/Usuario/Login.cshtml]

@@ -8,14 +8,14 @@ namespace Nexo.Models
     {
         [Key]
         public int Id { get; set; }
-        
+
         [Required]
         [StringLength(100)]
         public required string Nome { get; set; }
-        
+
         [StringLength(200)]
         public string? Descricao { get; set; }
-        
+
         public virtual ICollection<RolePermissao> RolePermissoes { get; set; } = new List<RolePermissao>();
     }
 }

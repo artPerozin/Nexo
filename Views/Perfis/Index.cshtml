@@ -1,7 +1,7 @@
-@model IEnumerable<Nexo.Models.Projeto>
+@model IEnumerable<Nexo.Models.Role>
 
 @{
-    ViewData["Title"] = "Projetos";
+    ViewData["Title"] = "Perfis de Acesso";
     Layout = null;
 }
 
@@ -10,7 +10,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Nexo </title>
+    <title>@ViewData["Title"] - ERP Pro</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
@@ -156,6 +156,7 @@
             font-weight: 600;
             text-decoration: none;
             transition: all 0.2s;
+            cursor: pointer;
         }
 
         .btn-primary:hover {
@@ -168,58 +169,45 @@
             padding: 2rem;
         }
 
-        .projects-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .projects-count {
-            font-size: 0.875rem;
-            color: #64748b;
-        }
-
-        .projects-grid {
+        .perfis-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
             gap: 1.5rem;
         }
 
-        .project-card {
+        .perfil-card {
             background: white;
             border: 1px solid var(--border);
             border-radius: 12px;
             padding: 1.5rem;
             transition: all 0.2s;
-            cursor: pointer;
         }
 
-        .project-card:hover {
+        .perfil-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
         }
 
-        .project-header {
+        .perfil-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
             margin-bottom: 1rem;
         }
 
-        .project-title {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: var(--dark);
-            margin-bottom: 0.25rem;
+        .perfil-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
         }
 
-        .project-date {
-            font-size: 0.8125rem;
-            color: #64748b;
-        }
-
-        .project-actions {
+        .perfil-actions {
             display: flex;
             gap: 0.5rem;
         }
@@ -227,7 +215,7 @@
         .btn-icon {
             width: 32px;
             height: 32px;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
             border: 1px solid var(--border);
@@ -244,67 +232,62 @@
             color: var(--primary);
         }
 
-        .project-description {
+        .btn-icon.btn-danger:hover {
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+
+        .perfil-info h3 {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin: 0.5rem 0 0.25rem 0;
+        }
+
+        .perfil-info p {
             font-size: 0.875rem;
             color: #64748b;
-            margin-bottom: 1rem;
-            line-height: 1.5;
+            margin: 0;
         }
 
-        .project-progress {
-            margin-bottom: 1rem;
-        }
-
-        .progress-label {
+        .perfil-stats {
             display: flex;
-            justify-content: space-between;
-            font-size: 0.8125rem;
-            color: #64748b;
-            margin-bottom: 0.5rem;
+            gap: 1.5rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
         }
 
-        .progress-bar-container {
-            width: 100%;
-            height: 8px;
-            background: #f1f5f9;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: var(--primary);
-            border-radius: 4px;
-            transition: width 0.3s;
-        }
-
-        .project-footer {
+        .stat-item {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: #64748b;
         }
 
-        .badge {
-            display: inline-block;
-            padding: 0.375rem 0.75rem;
-            border-radius: 6px;
-            font-size: 0.75rem;
+        .stat-item strong {
+            color: var(--dark);
             font-weight: 600;
         }
 
-        .badge-blue {
-            background: #dbeafe;
-            color: #1e40af;
+        .perfil-permissions {
+            margin-top: 1rem;
         }
 
-        .badge-green {
-            background: #d1fae5;
-            color: #065f46;
+        .permission-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
         }
 
-        .badge-yellow {
-            background: #fef3c7;
-            color: #92400e;
+        .permission-tag {
+            padding: 0.25rem 0.625rem;
+            background: #f1f5f9;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            color: #64748b;
         }
 
         .modal {
@@ -328,7 +311,7 @@
             background: white;
             border-radius: 16px;
             width: 90%;
-            max-width: 600px;
+            max-width: 700px;
             max-height: 90vh;
             overflow-y: auto;
         }
@@ -388,9 +371,51 @@
             box-shadow: 0 0 0 3px rgba(43, 76, 126, 0.1);
         }
 
-        textarea.form-control {
-            resize: vertical;
-            min-height: 100px;
+        .permissions-grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .permission-module {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .module-header {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .module-header i {
+            color: var(--primary);
+        }
+
+        .permission-checks {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-check-input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .form-check-label {
+            font-size: 0.875rem;
+            cursor: pointer;
         }
 
         .modal-footer {
@@ -425,7 +450,7 @@
                 margin-left: 0;
             }
 
-            .projects-grid {
+            .perfis-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -448,7 +473,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="@Url.Action("Index", "Projetos")" class="nav-link active">
+                <a href="@Url.Action("Index", "Projetos")" class="nav-link">
                     <i class="bi bi-kanban"></i>
                     <span>Projetos</span>
                 </a>
@@ -466,13 +491,13 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="#" class="nav-link">
+                <a href="@Url.Action("Index", "Usuarios")" class="nav-link">
                     <i class="bi bi-people"></i>
                     <span>Usuários</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a href="#" class="nav-link">
+                <a href="@Url.Action("Index", "Perfis")" class="nav-link active">
                     <i class="bi bi-shield-lock"></i>
                     <span>Perfis</span>
                 </a>
@@ -485,136 +510,134 @@
         <!-- Topbar -->
         <div class="topbar">
             <div class="topbar-title">
-                <h1>Projetos</h1>
-                <p>@Model.Count() projeto(s)</p>
+                <h1>Perfis de Acesso</h1>
+                <p>Gerencie os perfis e permissões do sistema RBAC</p>
             </div>
             <div class="topbar-actions">
-                <button class="btn-primary" onclick="openNewProjectModal()">
+                <button class="btn-primary" onclick="openNewPerfilModal()">
                     <i class="bi bi-plus-lg"></i>
-                    <span>Novo projeto</span>
+                    <span>Novo perfil</span>
                 </button>
             </div>
         </div>
 
         <!-- Content -->
         <div class="content-wrapper">
-            <div class="projects-grid">
-                @foreach (var projeto in Model)
+            <div class="perfis-grid">
+                @foreach (var perfil in Model)
                 {
-                    <div class="project-card" onclick="viewProject(@projeto.Id)">
-                        <div class="project-header">
-                            <div>
-                                <div class="project-title">@projeto.Nome</div>
-                                <div class="project-date">@projeto.DataInicio.ToString("dd/MM/yyyy")</div>
+                    var modulosCount = perfil.RolePermissoes
+                        .Select(rp => (rp.Permissao?.Nome ?? "").Split('.')[0])
+                        .Distinct()
+                        .Count();
+                    
+                    var permissoesCount = perfil.RolePermissoes.Count;
+
+                    <div class="perfil-card">
+                        <div class="perfil-header">
+                            <div class="perfil-icon">
+                                <i class="bi bi-shield-check"></i>
                             </div>
-                            <div class="project-actions" onclick="event.stopPropagation()">
-                                <button class="btn-icon" onclick="editProject(@projeto.Id)">
+                            <div class="perfil-actions">
+                                <button class="btn-icon" onclick="editPerfil(@perfil.Id)" title="Editar">
                                     <i class="bi bi-pencil"></i>
                                 </button>
-                                <button class="btn-icon" onclick="deleteProject(@projeto.Id)">
+                                <button class="btn-icon btn-danger" onclick="deletePerfil(@perfil.Id)" title="Excluir">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </div>
                         </div>
-                        
-                        @if (!string.IsNullOrEmpty(projeto.Descricao))
+                        <div class="perfil-info">
+                            <h3>@perfil.Nome</h3>
+                            <p>@(perfil.Descricao ?? "Sem descrição")</p>
+                        </div>
+                        <div class="perfil-stats">
+                            <div class="stat-item">
+                                <i class="bi bi-grid"></i>
+                                <span><strong>@modulosCount</strong> módulo(s)</span>
+                            </div>
+                            <div class="stat-item">
+                                <i class="bi bi-key"></i>
+                                <span><strong>@permissoesCount</strong> permissão(ões)</span>
+                            </div>
+                        </div>
+                        @if (perfil.RolePermissoes.Any())
                         {
-                            <div class="project-description">
-                                @(projeto.Descricao.Length > 100 ? projeto.Descricao.Substring(0, 100) + "..." : projeto.Descricao)
+                            <div class="perfil-permissions">
+                                <div class="permission-tags">
+                                    @foreach (var modulo in perfil.RolePermissoes.Select(rp => (rp.Permissao?.Nome ?? "").Split('.')[0]).Distinct().Take(5))
+                                    {
+                                        <span class="permission-tag">
+                                            <i class="bi bi-dot"></i> @modulo.Substring(0, 1).ToUpper()@modulo.Substring(1)
+                                        </span>
+                                    }
+                                    @if (perfil.RolePermissoes.Select(rp => (rp.Permissao?.Nome ?? "").Split('.')[0]).Distinct().Count() > 5)
+                                    {
+                                        <span class="permission-tag">+@(perfil.RolePermissoes.Select(rp => (rp.Permissao?.Nome ?? "").Split('.')[0]).Distinct().Count() - 5)</span>
+                                    }
+                                </div>
                             </div>
                         }
-                        
-                        <div class="project-progress">
-                            <div class="progress-label">
-                                <span>Progresso</span>
-                                <span>@projeto.Progresso%</span>
-                            </div>
-                            <div class="progress-bar-container">
-                                <div class="progress-bar" style="width: @projeto.Progresso%"></div>
-                            </div>
-                        </div>
-                        
-                        <div class="project-footer">
-                            <span class="badge @(
-                                projeto.Status == "Em andamento" ? "badge-blue" :
-                                projeto.Status == "Planejamento" ? "badge-yellow" :
-                                "badge-green"
-                            )">@projeto.Status</span>
-                            @if (projeto.Responsavel != null)
-                            {
-                                <span style="font-size: 0.8125rem; color: #64748b;">
-                                    <i class="bi bi-person"></i> @projeto.Responsavel.Nome
-                                </span>
-                            }
-                        </div>
                     </div>
                 }
             </div>
-
-            @if (!Model.Any())
-            {
-                <div style="text-align: center; padding: 4rem; color: #64748b;">
-                    <i class="bi bi-inbox" style="font-size: 3rem; display: block; margin-bottom: 1rem;"></i>
-                    <h3>Nenhum projeto cadastrado</h3>
-                    <p>Comece criando seu primeiro projeto</p>
-                    <button class="btn-primary" onclick="openNewProjectModal()" style="margin-top: 1rem;">
-                        <i class="bi bi-plus-lg"></i>
-                        Criar Projeto
-                    </button>
-                </div>
-            }
         </div>
     </div>
 
-    <!-- Modal Novo/Editar Projeto -->
-    <div id="projectModal" class="modal">
+    <!-- Modal Novo/Editar Perfil -->
+    <div id="perfilModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title" id="modalTitle">Novo Projeto</h3>
+                <h3 class="modal-title" id="modalTitle">Novo Perfil</h3>
                 <button class="btn-close" onclick="closeModal()">&times;</button>
             </div>
             <div class="modal-body">
-                <form id="projectForm">
-                    <input type="hidden" id="projetoId">
+                <form id="perfilForm">
+                    <input type="hidden" id="perfilId">
                     
                     <div class="form-group">
-                        <label class="form-label">Nome do Projeto</label>
+                        <label class="form-label">Nome do Perfil</label>
                         <input type="text" class="form-control" id="nome" required>
                     </div>
                     
                     <div class="form-group">
                         <label class="form-label">Descrição</label>
-                        <textarea class="form-control" id="descricao"></textarea>
+                        <input type="text" class="form-control" id="descricao">
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Status</label>
-                        <select class="form-select" id="status">
-                            <option value="Planejamento">Planejamento</option>
-                            <option value="Em andamento">Em andamento</option>
-                            <option value="Concluído">Concluído</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Progresso (%)</label>
-                        <input type="number" class="form-control" id="progresso" min="0" max="100" value="0">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Data de Início</label>
-                        <input type="date" class="form-control" id="dataInicio" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Data de Término</label>
-                        <input type="date" class="form-control" id="dataFim">
+                        <label class="form-label">Permissões</label>
+                        <div class="permissions-grid" id="permissionsContainer">
+                            @foreach (var modulo in ViewBag.PermissoesAgrupadas)
+                            {
+                                <div class="permission-module">
+                                    <div class="module-header">
+                                        <i class="bi bi-folder"></i>
+                                        @modulo.Key.Substring(0, 1).ToUpper()@modulo.Key.Substring(1)
+                                    </div>
+                                    <div class="permission-checks">
+                                        @foreach (var permissao in modulo.Value)
+                                        {
+                                            <div class="form-check">
+                                                <input type="checkbox" 
+                                                       class="form-check-input permission-checkbox" 
+                                                       id="perm_@permissao.Id" 
+                                                       value="@permissao.Id">
+                                                <label class="form-check-label" for="perm_@permissao.Id">
+                                                    @(permissao.Nome.Split('.').Length > 1 ? permissao.Nome.Split('.')[1].Substring(0, 1).ToUpper() + permissao.Nome.Split('.')[1].Substring(1) : permissao.Nome)
+                                                </label>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button class="btn-secondary" onclick="closeModal()">Cancelar</button>
-                <button class="btn-primary" onclick="saveProject()">Salvar</button>
+                <button class="btn-primary" onclick="savePerfil()">Salvar</button>
             </div>
         </div>
     </div>
@@ -622,58 +645,57 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        function openNewProjectModal() {
-            document.getElementById('modalTitle').textContent = 'Novo Projeto';
-            document.getElementById('projectForm').reset();
-            document.getElementById('projetoId').value = '';
-            document.getElementById('dataInicio').valueAsDate = new Date();
-            document.getElementById('projectModal').classList.add('show');
+        function openNewPerfilModal() {
+            document.getElementById('modalTitle').textContent = 'Novo Perfil';
+            document.getElementById('perfilForm').reset();
+            document.getElementById('perfilId').value = '';
+            document.querySelectorAll('.permission-checkbox').forEach(cb => cb.checked = false);
+            document.getElementById('perfilModal').classList.add('show');
         }
 
         function closeModal() {
-            document.getElementById('projectModal').classList.remove('show');
+            document.getElementById('perfilModal').classList.remove('show');
         }
 
-        async function editProject(id) {
-            // Buscar dados do projeto
-            const response = await fetch(`/Projetos/ObterProjeto?id=${id}`);
+        async function editPerfil(id) {
+            const response = await fetch(`/Perfis/ObterPerfil?id=${id}`);
             const data = await response.json();
             
             if (data.success) {
-                document.getElementById('modalTitle').textContent = 'Editar Projeto';
-                document.getElementById('projetoId').value = data.projeto.id;
-                document.getElementById('nome').value = data.projeto.nome;
-                document.getElementById('descricao').value = data.projeto.descricao || '';
-                document.getElementById('status').value = data.projeto.status;
-                document.getElementById('progresso').value = data.projeto.progresso;
-                document.getElementById('dataInicio').value = data.projeto.dataInicio.split('T')[0];
-                if (data.projeto.dataFim) {
-                    document.getElementById('dataFim').value = data.projeto.dataFim.split('T')[0];
-                }
-                document.getElementById('projectModal').classList.add('show');
+                document.getElementById('modalTitle').textContent = 'Editar Perfil';
+                document.getElementById('perfilId').value = data.perfil.id;
+                document.getElementById('nome').value = data.perfil.nome;
+                document.getElementById('descricao').value = data.perfil.descricao || '';
+                
+                document.querySelectorAll('.permission-checkbox').forEach(cb => {
+                    cb.checked = data.perfil.permissoesIds.includes(parseInt(cb.value));
+                });
+                
+                document.getElementById('perfilModal').classList.add('show');
             }
         }
 
-        async function saveProject() {
-            const id = document.getElementById('projetoId').value;
-            const projeto = {
+        async function savePerfil() {
+            const id = document.getElementById('perfilId').value;
+            
+            const permissoesIds = Array.from(document.querySelectorAll('.permission-checkbox:checked'))
+                .map(cb => parseInt(cb.value));
+
+            const perfil = {
                 id: id ? parseInt(id) : 0,
                 nome: document.getElementById('nome').value,
-                descricao: document.getElementById('descricao').value,
-                status: document.getElementById('status').value,
-                progresso: parseInt(document.getElementById('progresso').value),
-                dataInicio: document.getElementById('dataInicio').value,
-                dataFim: document.getElementById('dataFim').value || null
+                descricao: document.getElementById('descricao').value || null,
+                permissoesIds: permissoesIds
             };
 
-            const url = id ? '/Projetos/Editar' : '/Projetos/Criar';
+            const url = id ? '/Perfis/Editar' : '/Perfis/Criar';
             
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(projeto)
+                body: JSON.stringify(perfil)
             });
 
             const data = await response.json();
@@ -697,7 +719,7 @@
             }
         }
 
-        async function deleteProject(id) {
+        async function deletePerfil(id) {
             const result = await Swal.fire({
                 title: 'Tem certeza?',
                 text: 'Você não poderá reverter esta ação!',
@@ -710,7 +732,7 @@
             });
 
             if (result.isConfirmed) {
-                const response = await fetch('/Projetos/Excluir', {
+                const response = await fetch('/Perfis/Excluir', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
@@ -729,12 +751,15 @@
                     }).then(() => {
                         location.reload();
                     });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Erro!',
+                        text: data.message,
+                        confirmButtonColor: '#2B4C7E'
+                    });
                 }
             }
-        }
-
-        function viewProject(id) {
-            window.location.href = `/Projetos/Detalhes/${id}`;
         }
     </script>
 </body>

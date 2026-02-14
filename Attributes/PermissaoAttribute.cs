@@ -1,13 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Routing;
 using Nexo.Helpers;
-using Nexo.Data;
 
 namespace Nexo.Attributes
 {
     public class PermissaoAttribute : TypeFilterAttribute
     {
-        public PermissaoAttribute(string permissao) : base(typeof(PermissaoFilter))
+        public PermissaoAttribute(string permissao)
+            : base(typeof(PermissaoFilter))
         {
             Arguments = new object[] { permissao };
         }
@@ -16,18 +17,21 @@ namespace Nexo.Attributes
     public class PermissaoFilter : IAsyncActionFilter
     {
         private readonly string _permissao;
-        private readonly AppDbContext _context;
+        private readonly AuthorizationHelper _authHelper;
 
-        public PermissaoFilter(string permissao, AppDbContext context)
+        public PermissaoFilter(string permissao, AuthorizationHelper authHelper)
         {
             _permissao = permissao;
-            _context = context;
+            _authHelper = authHelper;
         }
 
-        public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+        public async Task OnActionExecutionAsync(
+            ActionExecutingContext context,
+            ActionExecutionDelegate next)
         {
             var usuarioId = context.HttpContext.Session.GetInt32("UsuarioId");
 
+            // 🔐 Não logado
             if (usuarioId == null)
             {
                 context.Result = new RedirectToRouteResult(
@@ -35,11 +39,13 @@ namespace Nexo.Attributes
                         { "controller", "Usuario" },
                         { "action", "Login" }
                     });
+
                 return;
             }
 
-            var authHelper = new AuthorizationHelper(_context);
-            var temPermissao = await authHelper.UsuarioTemPermissao(usuarioId.Value, _permissao);
+            // 🔐 Verifica permissão
+            var temPermissao = await _authHelper
+                .UsuarioTemPermissao(usuarioId.Value, _permissao);
 
             if (!temPermissao)
             {
@@ -47,6 +53,7 @@ namespace Nexo.Attributes
                 {
                     ViewName = "~/Views/Shared/AcessoNegado.cshtml"
                 };
+
                 return;
             }
 

@@ -1,114 +1,206 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Nexo.Data;
+using Nexo.Attributes;
+using Nexo.Contexts;
 using Nexo.Models;
+using Nexo.Models.DTOs;
 
 namespace Nexo.Controllers
 {
     public class UsuarioController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly NexoContext _context;
 
-        public UsuarioController(AppDbContext context)
+        public UsuarioController(NexoContext context)
         {
             _context = context;
         }
 
-        // GET: Usuario/Cadastro
-        public IActionResult Cadastro()
+        #region Helpers
+
+        private IActionResult Success(string message, object? data = null)
+            => Json(new { success = true, message, data });
+
+        private IActionResult Error(string message)
+            => Json(new { success = false, message });
+
+        private int? UsuarioLogadoId()
+            => HttpContext.Session.GetInt32("UsuarioId");
+
+        private void CriarSessao(Usuario usuario)
         {
-            return View();
+            HttpContext.Session.SetInt32("UsuarioId", usuario.Id);
+            HttpContext.Session.SetString("UsuarioNome", usuario.Nome);
+            HttpContext.Session.SetInt32("RoleId", usuario.RoleId);
         }
 
-        // POST: Usuario/Cadastro
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Cadastro(Usuario usuario)
+        private void EncerrarSessao()
         {
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    // Verifica se o email já existe
-                    if (await _context.Usuarios.AnyAsync(u => u.Email == usuario.Email))
-                    {
-                        return Json(new { success = false, message = "Este email já está cadastrado!" });
-                    }
-
-                    // Hash da senha
-                    usuario.Senha = BCrypt.Net.BCrypt.HashPassword(usuario.Senha);
-                    
-                    // Define o role padrão como "Usuario" (ID 3)
-                    usuario.RoleId = 3;
-                    usuario.Ativo = true;
-                    usuario.DataCriacao = DateTime.UtcNow;
-
-                    _context.Usuarios.Add(usuario);
-                    await _context.SaveChangesAsync();
-
-                    return Json(new { success = true, message = "Cadastro realizado com sucesso!" });
-                }
-                catch (Exception ex)
-                {
-                    return Json(new { success = false, message = "Erro ao cadastrar: " + ex.Message });
-                }
-            }
-
-            var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
-            return Json(new { success = false, message = string.Join("<br>", errors) });
+            HttpContext.Session.Clear();
         }
 
-        // GET: Usuario/Login
+        #endregion
+
+        // =========================
+        // LOGIN
+        // =========================
+
+        [HttpGet]
         public IActionResult Login()
         {
+            if (UsuarioLogadoId() != null)
+                return RedirectToAction("Index", "Dashboard");
+
             return View();
         }
 
-        // POST: Usuario/Login
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    var usuario = await _context.Usuarios
-                        .Include(u => u.Role)
-                        .FirstOrDefaultAsync(u => u.Email == model.Email);
+            if (!ModelState.IsValid)
+                return Error("Dados inválidos.");
 
-                    if (usuario != null && usuario.Ativo && BCrypt.Net.BCrypt.Verify(model.Senha, usuario.Senha))
-                    {
-                        HttpContext.Session.SetString("UsuarioNome", usuario.Nome);
-                        HttpContext.Session.SetInt32("UsuarioId", usuario.Id);
-                        HttpContext.Session.SetString("UsuarioEmail", usuario.Email);
-                        HttpContext.Session.SetInt32("UsuarioRoleId", usuario.RoleId);
+            var usuario = await _context.Usuarios
+                .Include(u => u.Role)
+                .FirstOrDefaultAsync(u =>
+                    u.Email == model.Email.Trim().ToLower());
 
-                        return Json(new { success = true, message = "Login realizado com sucesso!" });
-                    }
+            if (usuario == null || !usuario.Ativo)
+                return Error("Usuário ou senha inválidos.");
 
-                    if (usuario != null && !usuario.Ativo)
-                    {
-                        return Json(new { success = false, message = "Usuário inativo. Entre em contato com o administrador." });
-                    }
+            if (!BCrypt.Net.BCrypt.Verify(model.Senha, usuario.Senha))
+                return Error("Usuário ou senha inválidos.");
 
-                    return Json(new { success = false, message = "Email ou senha inválidos!" });
-                }
-                catch (Exception ex)
-                {
-                    return Json(new { success = false, message = "Erro ao fazer login: " + ex.Message });
-                }
-            }
+            CriarSessao(usuario);
 
-            var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
-            return Json(new { success = false, message = string.Join("<br>", errors) });
+            return Success($"Bem-vindo, {usuario.Nome}!");
         }
 
-        // GET: Usuario/Logout
         public IActionResult Logout()
         {
-            HttpContext.Session.Clear();
-            return RedirectToAction("Login");
+            EncerrarSessao();
+            return RedirectToAction(nameof(Login));
+        }
+
+        // =========================
+        // LISTAGEM
+        // =========================
+
+        [Permissao("usuarios.listar")]
+        public async Task<IActionResult> Index()
+        {
+            var usuarios = await _context.Usuarios
+                .AsNoTracking()
+                .Include(u => u.Role)
+                .OrderBy(u => u.Nome)
+                .ToListAsync();
+
+            ViewBag.Roles = await _context.Roles
+                .AsNoTracking()
+                .OrderBy(r => r.Nome)
+                .ToListAsync();
+
+            return View(usuarios);
+        }
+
+        // =========================
+        // CRIAR
+        // =========================
+
+        [Permissao("usuarios.criar")]
+        [HttpPost]
+        public async Task<IActionResult> Criar([FromBody] UsuarioCriarDto model)
+        {
+            if (!ModelState.IsValid)
+                return Error("Dados inválidos.");
+
+            if (await _context.Usuarios.AnyAsync(u => u.Email == model.Email))
+                return Error("E-mail já cadastrado.");
+
+            if (!await _context.Roles.AnyAsync(r => r.Id == model.RoleId))
+                return Error("Perfil inválido.");
+
+            var usuario = new Usuario
+            {
+                Nome = model.Nome,
+                Email = model.Email.Trim().ToLower(),
+                Senha = BCrypt.Net.BCrypt.HashPassword(model.Senha),
+                RoleId = model.RoleId,
+                Ativo = true,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _context.Usuarios.Add(usuario);
+            await _context.SaveChangesAsync();
+
+            return Success("Usuário criado com sucesso.", new { usuario.Id });
+        }
+
+        // =========================
+        // EDITAR
+        // =========================
+
+        [Permissao("usuarios.editar")]
+        [HttpPost]
+        public async Task<IActionResult> Editar([FromBody] UsuarioEditarDto model)
+        {
+            if (!ModelState.IsValid)
+                return Error("Dados inválidos.");
+
+            var usuario = await _context.Usuarios.FindAsync(model.Id);
+
+            if (usuario == null)
+                return Error("Usuário não encontrado.");
+
+            if (await _context.Usuarios
+                .AnyAsync(u => u.Email == model.Email && u.Id != model.Id))
+                return Error("E-mail já está em uso.");
+
+            if (!await _context.Roles.AnyAsync(r => r.Id == model.RoleId))
+                return Error("Perfil inválido.");
+
+            usuario.Nome = model.Nome;
+            usuario.Email = model.Email.Trim().ToLower();
+            usuario.RoleId = model.RoleId;
+            usuario.Ativo = model.Ativo;
+            usuario.DataAtualizacao = DateTime.UtcNow;
+
+            if (!string.IsNullOrWhiteSpace(model.Senha))
+                usuario.Senha = BCrypt.Net.BCrypt.HashPassword(model.Senha);
+
+            await _context.SaveChangesAsync();
+
+            return Success("Usuário atualizado com sucesso.");
+        }
+
+        // =========================
+        // ALTERAR STATUS
+        // =========================
+
+        [Permissao("usuarios.editar")]
+        [HttpPost]
+        public async Task<IActionResult> AlterarStatus(int id)
+        {
+            var usuarioLogadoId = UsuarioLogadoId();
+
+            if (usuarioLogadoId == null)
+                return Error("Sessão inválida.");
+
+            if (id == usuarioLogadoId)
+                return Error("Você não pode alterar seu próprio status.");
+
+            var usuario = await _context.Usuarios.FindAsync(id);
+
+            if (usuario == null)
+                return Error("Usuário não encontrado.");
+
+            usuario.Ativo = !usuario.Ativo;
+            usuario.DataAtualizacao = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+
+            return Success($"Usuário {(usuario.Ativo ? "ativado" : "desativado")} com sucesso.");
         }
     }
 }

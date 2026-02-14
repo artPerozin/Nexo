@@ -1,39 +1,35 @@
 using Microsoft.EntityFrameworkCore;
-using Nexo.Data;
+using Nexo.Contexts;
 
 namespace Nexo.Helpers
 {
-    public class AuthorizationHelper(AppDbContext context)
+    public class AuthorizationHelper
     {
-        private readonly AppDbContext _context = context;
+        private readonly NexoContext _context;
+
+        public AuthorizationHelper(NexoContext context)
+        {
+            _context = context;
+        }
 
         public async Task<bool> UsuarioTemPermissao(int usuarioId, string nomePermissao)
         {
-            var usuario = await _context.Usuarios
-                .Include(u => u.Role)
-                .ThenInclude(r => r.RolePermissoes)
-                .ThenInclude(rp => rp.Permissao)
-                .FirstOrDefaultAsync(u => u.Id == usuarioId && u.Ativo);
-
-            if (usuario == null) return false;
-
-            return usuario.Role?.RolePermissoes
-                .Any(rp => rp.Permissao.Nome == nomePermissao) ?? false;
+            return await _context.RolePermissoes
+                .AsNoTracking()
+                .Where(rp =>
+                    rp.Role.Usuarios.Any(u => u.Id == usuarioId && u.Ativo) &&
+                    rp.Permissao.Nome == nomePermissao)
+                .AnyAsync();
         }
 
         public async Task<List<string>> ObterPermissoesUsuario(int usuarioId)
         {
-            var usuario = await _context.Usuarios
-                .Include(u => u.Role)
-                .ThenInclude(r => r.RolePermissoes)
-                .ThenInclude(rp => rp.Permissao)
-                .FirstOrDefaultAsync(u => u.Id == usuarioId && u.Ativo);
-
-            if (usuario == null) return new List<string>();
-
-            return usuario.Role?.RolePermissoes
+            return await _context.RolePermissoes
+                .AsNoTracking()
+                .Where(rp =>
+                    rp.Role.Usuarios.Any(u => u.Id == usuarioId && u.Ativo))
                 .Select(rp => rp.Permissao.Nome)
-                .ToList() ?? new List<string>();
+                .ToListAsync();
         }
     }
 }
