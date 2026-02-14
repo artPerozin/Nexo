@@ -110,9 +110,7 @@ C:\Users\peroz\OneDrive\Desktop\UDESC\KonvexJr\Nexo\obj\Debug\net10.0\Nexo.sourc
 C:\Users\peroz\OneDrive\Desktop\UDESC\KonvexJr\Nexo\obj\Debug\net10.0\rjimswa.dswa.cache.json
 C:\Users\peroz\OneDrive\Desktop\UDESC\KonvexJr\Nexo\obj\Debug\net10.0\rjsmrazor.dswa.cache.json
 C:\Users\peroz\OneDrive\Desktop\UDESC\KonvexJr\Nexo\obj\Debug\net10.0\rjsmcshtml.dswa.cache.json
-C:\Users\peroz\OneDrive\Desktop\UDESC\KonvexJr\Nexo\obj\Debug\net10.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
 C:\Users\peroz\OneDrive\Desktop\UDESC\KonvexJr\Nexo\obj\Debug\net10.0\scopedcss\bundle\Nexo.styles.css
-C:\Users\peroz\OneDrive\Desktop\UDESC\KonvexJr\Nexo\obj\Debug\net10.0\scopedcss\projectbundle\Nexo.bundle.scp.css
 C:\Users\peroz\OneDrive\Desktop\UDESC\KonvexJr\Nexo\obj\Debug\net10.0\compressed\pk4cr3nl14-{0}-b9sayid5wm-b9sayid5wm.gz
 C:\Users\peroz\OneDrive\Desktop\UDESC\KonvexJr\Nexo\obj\Debug\net10.0\compressed\typu2lokew-{0}-61n19gt1b8-61n19gt1b8.gz
 C:\Users\peroz\OneDrive\Desktop\UDESC\KonvexJr\Nexo\obj\Debug\net10.0\compressed\kxt6dhh1xe-{0}-xtxxf3hu2r-xtxxf3hu2r.gz
@@ -175,8 +173,6 @@ C:\Users\peroz\OneDrive\Desktop\UDESC\KonvexJr\Nexo\obj\Debug\net10.0\compressed
 C:\Users\peroz\OneDrive\Desktop\UDESC\KonvexJr\Nexo\obj\Debug\net10.0\compressed\54eg9fi4fx-{0}-muycvpuwrr-muycvpuwrr.gz
 C:\Users\peroz\OneDrive\Desktop\UDESC\KonvexJr\Nexo\obj\Debug\net10.0\compressed\itvrkk4d7s-{0}-87fc7y1x7t-87fc7y1x7t.gz
 C:\Users\peroz\OneDrive\Desktop\UDESC\KonvexJr\Nexo\obj\Debug\net10.0\compressed\gtnglh9sz4-{0}-mlv21k5csn-mlv21k5csn.gz
-C:\Users\peroz\OneDrive\Desktop\UDESC\KonvexJr\Nexo\obj\Debug\net10.0\compressed\abqfcjxpmt-{0}-l7nzgemut7-l7nzgemut7.gz
-C:\Users\peroz\OneDrive\Desktop\UDESC\KonvexJr\Nexo\obj\Debug\net10.0\compressed\4wb3eptj8w-{0}-l7nzgemut7-l7nzgemut7.gz
 C:\Users\peroz\OneDrive\Desktop\UDESC\KonvexJr\Nexo\obj\Debug\net10.0\staticwebassets.build.json
 C:\Users\peroz\OneDrive\Desktop\UDESC\KonvexJr\Nexo\obj\Debug\net10.0\staticwebassets.build.json.cache
 C:\Users\peroz\OneDrive\Desktop\UDESC\KonvexJr\Nexo\obj\Debug\net10.0\staticwebassets.development.json
@@ -188,3 +184,4 @@ C:\Users\peroz\OneDrive\Desktop\UDESC\KonvexJr\Nexo\obj\Debug\net10.0\refint\Nex
 C:\Users\peroz\OneDrive\Desktop\UDESC\KonvexJr\Nexo\obj\Debug\net10.0\Nexo.pdb
 C:\Users\peroz\OneDrive\Desktop\UDESC\KonvexJr\Nexo\obj\Debug\net10.0\Nexo.genruntimeconfig.cache
 C:\Users\peroz\OneDrive\Desktop\UDESC\KonvexJr\Nexo\obj\Debug\net10.0\ref\Nexo.dll
+C:\Users\peroz\OneDrive\Desktop\UDESC\KonvexJr\Nexo\obj\Debug\net10.0\compressed\7hbq8bo0vh-{0}-bjxk2f5w6k-bjxk2f5w6k.gz
