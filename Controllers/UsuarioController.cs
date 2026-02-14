@@ -3,18 +3,14 @@ using Microsoft.EntityFrameworkCore;
 using Nexo.Attributes;
 using Nexo.Contexts;
 using Nexo.Models;
+using Nexo.Models.Dtos;
 using Nexo.Models.DTOs;
 
 namespace Nexo.Controllers
 {
-    public class UsuarioController : Controller
+    public class UsuarioController(NexoContext context) : Controller
     {
-        private readonly NexoContext _context;
-
-        public UsuarioController(NexoContext context)
-        {
-            _context = context;
-        }
+        private readonly NexoContext _context = context;
 
         #region Helpers
 
@@ -56,26 +52,30 @@ namespace Nexo.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        public async Task<IActionResult> Login(LoginDto model)
         {
             if (!ModelState.IsValid)
-                return Error("Dados inválidos.");
+                return Json(new { success = false, message = "Dados inválidos." });
 
             var usuario = await _context.Usuarios
                 .Include(u => u.Role)
-                .FirstOrDefaultAsync(u =>
-                    u.Email == model.Email.Trim().ToLower());
+                .FirstOrDefaultAsync(u => u.Email == model.Email);
 
-            if (usuario == null || !usuario.Ativo)
-                return Error("Usuário ou senha inválidos.");
+            if (usuario == null || !BCrypt.Net.BCrypt.Verify(model.Senha, usuario.Senha))
+                return Json(new { success = false, message = "E-mail ou senha inválidos." });
 
-            if (!BCrypt.Net.BCrypt.Verify(model.Senha, usuario.Senha))
-                return Error("Usuário ou senha inválidos.");
+            if (!usuario.Ativo)
+                return Json(new { success = false, message = "Usuário desativado." });
 
-            CriarSessao(usuario);
+            // 🔥 AQUI ESTÁ O QUE FALTA
+            HttpContext.Session.SetInt32("UsuarioId", usuario.Id);
+            HttpContext.Session.SetString("UsuarioNome", usuario.Nome);
+            HttpContext.Session.SetString("UsuarioEmail", usuario.Email);
+            HttpContext.Session.SetString("UsuarioRole", usuario.Role?.Nome ?? "");
 
-            return Success($"Bem-vindo, {usuario.Nome}!");
+            return Json(new { success = true, message = "Login realizado com sucesso." });
         }
+
 
         public IActionResult Logout()
         {

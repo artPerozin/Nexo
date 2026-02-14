@@ -6,24 +6,24 @@ using Nexo.Models;
 
 namespace Nexo.Controllers
 {
-    public class DashboardController : Controller
+    public class DashboardController(NexoContext context) : Controller
     {
-        private readonly NexoContext _context;
-
-        public DashboardController(NexoContext context)
-        {
-            _context = context;
-        }
+        private readonly NexoContext _context = context;
 
         [Permissao("dashboard.visualizar")]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var usuario = await ObterUsuarioLogado();
+            var usuarioId = HttpContext.Session.GetInt32("UsuarioId");
 
-            if (usuario == null)
+            if (usuarioId == null)
                 return RedirectToAction("Login", "Usuario");
 
-            return View(usuario);
+            ViewBag.ProjetosAtivos = 5;
+            ViewBag.DealsAbertos = 3;
+            ViewBag.Pipeline = 150000;
+            ViewBag.Saldo = 42000;
+
+            return View();
         }
 
         [HttpGet]
